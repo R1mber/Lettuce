@@ -1,0 +1,125 @@
+{
+    "tratamientos": [
+        {
+            "id":1,
+            "class":"2",
+            "nombreEnfermedad":"oidio",
+            "descripcion": "El oídio o polvillo es una enfermedad muy común que ataca a las lechugas, especialmente en invernaderos. Este hongo es un parásito obligado, es decir, que afecta solamente a las lechugas y especies similares. El oídio aparece generalmente en condiciones de una alta humedad y temperaturas medianas",
+            "tratamientos": [
+                {
+                    "id": 1,
+                    "nombre": "Control químico",
+                    "descripcion": "Realizar aplicaciones semanales preventivas de azufre, que es un fungicida de contacto, para proteger la planta en su crecimiento. Si ya se presenta micelio. deben aplicarse fungicidas de tipo sistémico para el control del hongo, que deben ser autorizados por el Servicio Agrícola y Ganadero y específicos para los cultivos de lechuga. En todo momento se debe considerar el efecto residual y tiempo de carencia para las aplicaciones."
+                },
+                {
+                    "id": 2,
+                    "nombre": "Medida de control",
+                    "descripcion": "Establecer una densidad de población de plantas que permitan la circulación del aire entre ellas. En el caso de la lechuga en el otoño se sugiere aumentar distancias entre y sobre hilera a 30 cm."
+                },
+                {
+                    "id": 3,
+                    "nombre": "Medida de control",
+                    "descripcion": "La ventilación del invernadero debe ser diaria, abriendo antes de las 10 am para reducir la humedad ambiental y cerrando a partir de las 17:00 para guardar temperatura."
+                },
+                {
+                    "id": 4,
+                    "nombre": "Medida de control",
+                    "descripcion": "Manejar en forma adecuada la humedad del suelo procurando no regar de manera excesiva."
+                },
+                {
+                    "id": 5,
+                    "nombre": "Medida de control",
+                    "descripcion": "Evitar el uso exagerado de biopreparados a base de guano ya que dejan disponible nitrógeno. Este nutriente favorece el desarrollo del follaje y su exceso hace que las plantas sean muy suculentas y por ende susceptibles a enfermedades y plagas."
+                },
+                {
+                    "id": 6,
+                    "nombre": "Medida de control",
+                    "descripcion": "Eliminar plantas muy afectadas, pues son fuente de inóculo de la enfermedad. Aplicación de cal en los puntos donde se retiran las plantas"
+                },
+                {
+                    "id": 7,
+                    "nombre": "Medida de control",
+                    "descripcion": "Eliminación de malezas como lechuguilla que es hospedera alterna."
+                }
+                
+                
+            ]
+        },
+        {
+            "id":2,
+            "class":"1",
+            "nombreEnfermedad":"Septoria",
+            "descripcion":"Septoria produce manchas sobre la parte inferior de las hojas. Para que este hongo haga su aparición el cultivo debe estar en zonas de mucha humedad o época de lluvias. Sobre las hojas aparecen manchas cloróticas pequeñas y con formas irregulares. Con el tiempo, dichas manchas se vuelven necróticas y se va formando un anillo clorótico alrededor, síntoma del progreso de la enfermedad.",
+            "tratamientos":[
+             {
+                "id": 1,
+                "nombre": "Control orgánico",
+                "descripcion": " Para controlar el patógeno pueden resultar útiles los fungicidas a base de cobre, como caldo bordelés, hidróxido de cobre, sulfato de cobre o sulfato de oxicloruro de cobre. Aplíquelos en intervalos de 7 a 10 días a lo largo del término de la temporada. Acate las restricciones indicadas en la etiqueta del pesticida. "
+
+             },
+             {
+                "id": 2,
+                "nombre": "Tratamiento químico",
+                "descripcion": " Opte siempre por un método integral de medidas preventivas con tratamientos biológicos, de ser posible. Los fungicidas que contienen maneb, mancozeb y clorotalonil controlan eficazmente la mancha foliar por Septoria. Aplíquelos en intervalos de 7 a 10 días a lo largo de la temporada, principalmente durante la floración y el cuajado de las frutas. Acate las restricciones indicadas en la etiqueta del pesticida. "
+             },
+             {
+                "id": 3,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Adquiera semillas certificadas, libres de enfermedades."
+             },
+             {
+                "id": 4,
+                "nombre": "Medidas preventivas",
+                "descripcion":"  Use variedades resistentes en caso de haberlas disponibles. "
+             },
+             {
+                "id": 5,
+                "nombre": "Medidas preventivas",
+                "descripcion":"  Utilice mantillo orgánico o plástico para impedir la transmisión desde el suelo. "
+             },
+             {
+                "id": 6,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Quite las hojas infectadas y destrúyalas. "
+             },
+             {
+                "id": 7,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Use estacas para mejorar la circulación del aire. "
+             },
+             {
+                "id": 8,
+                "nombre": "Medidas preventivas",
+                "descripcion":" No deje que las plantas toquen el suelo. "
+             },
+             {
+                "id": 9,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Asegúrese de que las áreas de producción estén libres de malezas susceptibles. "
+             },
+             {
+                "id": 10,
+                "nombre": "Medidas preventivas",
+                "descripcion":"No utilice aspersores ni ningún otro tipo de herramienta de riego por aspersión. "
+             },
+             {
+                "id": 11,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Mantenga su equipo y sus herramientas limpios. "
+             },
+             {
+                "id": 12,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Retire o destruya los residuos vegetales enterrándolos profundamente con el arado inmediatamente después de la cosecha. "
+             },
+             {
+                "id": 13,
+                "nombre": "Medidas preventivas",
+                "descripcion":" Programe una rotación con plantas no solanáceas. "
+             }
+            ]
+
+
+        }
+    ]
+}

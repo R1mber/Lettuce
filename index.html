@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YOLOv8 Object Detection</title>
+    <style>
+        canvas {
+            display:block;
+            border: 1px solid black;
+            margin-top:10px;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   
+</head>
+<body>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>DETECCION DE LAS ENFERMEDADES EN LAS LECHUGAS</h1>
+            </div>
+            <div class="col-12">
+                <div class="input-group mb-3">
+                    <input class="form-control form-control-lg" id="uploadInput" type="file">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div style="display: flex;">
+                <div class="card" style="width: 40rem;">
+                    <canvas id="pred"></canvas>
+                    <div class="card-body" id="dataDetect">
+
+                    </div>
+                </div>
+                <div class="card" style="width: 40rem;">
+                    <canvas id="original"></canvas>
+                    <div class="card-body">
+                      <h5 class="card-title">Imagen Original</h5>
+                    </div>
+                </div>        
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tratamientos recomendados</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="accordion" id="modadTratamientos">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+    </div>
+        
+    <script>
+        async function resizeImage(file, maxWidth, maxHeight) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                    }
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob((blob) => {
+                    resolve(new File([blob], file.name));
+                }, file.type);
+                };
+                img.onerror = reject;
+            });
+            }
+       /**
+       * "Upload" button onClick handler: uploads selected 
+       * image file to backend, receives an array of
+       * detected objects and draws them on top of image
+       */
+       const input = document.getElementById("uploadInput");
+       input.addEventListener("change",async(event) => {
+           const file = event.target.files[0];
+           const resizedImage = await resizeImage(file, 640, 640);
+           const data = new FormData();
+           data.append("image_file",resizedImage,"image_file");
+           const response = await fetch("/detect",{
+               method:"post",
+               body:data
+           });
+           const boxes = await response.json();
+           draw_image_and_boxes(resizedImage,boxes);
+       })
+
+       /**
+       * Function draws the image from provided file
+       * and bounding boxes of detected objects on
+       * top of the image
+       * @param file Uploaded file object
+       * @param boxes Array of bounding boxes in format
+         [[x1,y1,x2,y2,object_type,probability],...]
+       */
+       function draw_image_and_boxes(file,boxes) {
+          const img = new Image()
+          img.src = URL.createObjectURL(file);
+          img.onload = () => {
+              //const canvas = document.querySelector("canvas");
+              const canvas = document.getElementById("pred");
+              const original = document.getElementById("original");
+              original.width = img.width;
+              original.height = img.height;
+              const ctx_original = original.getContext("2d");
+              ctx_original.drawImage(img,0,0);
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img,0,0);
+              ctx.strokeStyle = "#00FF00";
+              ctx.lineWidth = 3;
+              ctx.font = "18px serif";
+              //const aux =0;
+              const enfemedades = [];
+              boxes.forEach(([x1,y1,x2,y2,label,prob, mask]) => {
+                  const nametxt = label + "-" + prob;
+                  ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+                  ctx.fillStyle = "#00ff00";
+                  const width = ctx.measureText(nametxt).width;
+                  ctx.fillRect(x1,y1,width+10,25);
+                  ctx.fillStyle = "#000000";
+                  ctx.fillText(nametxt,x1,y1+18);
+                  let colorSelect = "#00000000";
+                  
+                  if(label == "0"){
+                    colorSelect = "#6FF10970";
+                  }
+                  if(label == "1"){
+                    colorSelect = "#EC42FA70";
+                  }
+                  if(label == "2"){
+                    colorSelect = "#F9640970";
+                  }
+                  console.log("label :");
+                  console.log(label);
+
+                  // agregar labes sin repetir
+                    if(!enfemedades.includes(label)){
+                        enfemedades.push(label);
+                    }
+                  
+
+                  
+                  for (let y = 0; y < canvas.height; y++) {
+                    for (let x = 0; x < canvas.width; x++) {
+                        const maskValue = mask[y][x]; // Obtén el valor de la máscara en la posición (x, y)
+                        // Define el color basado en el valor de la máscara (por ejemplo, blanco para 1 y negro para 0)
+                        const color = maskValue === 1 ? colorSelect : "#00000000";
+                        // const color = maskValue === 1 ? "rgba(100, 100, 100, 0.7)" : "rgba(0, 0, 0, 0)";
+                        // Establece el color de relleno del contexto 2D 
+                        ctx.fillStyle = color;
+                        
+                        // Dibuja un píxel en la posición (x, y) con transparencia 
+                        //ctx.fillRect( )
+
+                       ctx.fillRect(x, y, 1, 1);
+                    }
+                  }
+                 // aux = aux + 1;
+
+              });
+              // verificar sin en enfermedades existe valores "1" o "2" para mostrar una consola con los valores
+              fetch('tratamientos.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Aquí puedes acceder a los datos del archivo JSON
+                    console.log(data.tratamientos);
+                    const tratamientos = data.tratamientos;
+                    const sugerenciasTratamientos = [];
+
+                    enfemedades.forEach((enfermedadDetectada) => {
+                        const tratamientoEncontrado = tratamientos.find((tratamiento) => tratamiento.class === enfermedadDetectada);
+                        if (tratamientoEncontrado) {
+                            sugerenciasTratamientos.push(tratamientoEncontrado);
+                        }
+                    });
+                    console.log(sugerenciasTratamientos);
+                    //id dataDetect 
+                    /*
+
+                    */
+                    const dataDetect = document.getElementById("dataDetect");
+                    const modalTratamiento = document.getElementById("modadTratamientos");
+                    let nombreEnf;
+                    let descripcionEnf;
+                    dataDetect.innerHTML = "";
+                    modalTratamiento.innerHTML = "";
+                    sugerenciasTratamientos.forEach((sugerenciaTratamiento) => {
+                        nombreEnf = sugerenciaTratamiento.nombreEnfermedad;
+                        descripcionEnf = sugerenciaTratamiento.descripcion;
+                        // renderizar en el html
+                        const datos = `
+                            <h5 class="card-title">${nombreEnf}</h5>
+                            <p class="card-text">${descripcionEnf}</p>
+                            
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Ver Tratamientos
+                            </button>
+                        `
+                        dataDetect.innerHTML += datos;
+
+                        let lisEnTratamientos = "";
+                        sugerenciaTratamiento.tratamientos.forEach((trat)=>{
+                            const nombre = trat.nombre;
+                            const descripcion = trat.descripcion;
+                            lisEnTratamientos += `
+                                <li>
+                                    ${nombre} <br/>
+                                    ${descripcion}
+                                </li>
+                            `
+                        })
+
+
+
+                        const datosTratamiento = `
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                        ${nombreEnf}
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                <div class="accordion-body">
+                                    ${lisEnTratamientos}
+                                </div>
+                                </div>
+                            </div>
+                        `
+                        modalTratamiento.innerHTML += datosTratamiento;
+
+                    });
+
+                })
+                .catch(error => {
+                    console.log('Error al cargar el archivo JSON:', error);
+                });
+              
+          }
+       }
+  </script> 
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
+
